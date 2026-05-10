@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: haproxy-ingress
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://haproxy-ingress.github.io/charts'
+    chart: haproxy-ingress
+    targetRevision: 0.15.x
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: haproxy-system
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [CreateNamespace=true]

@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik-gateway-api
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://traefik.github.io/charts'
+    chart: traefik
+    targetRevision: 33.x.x
+    helm:
+      values: |
+        providers:
+          kubernetesIngress:
+            enabled: false # Disable standard Ingress here
+          kubernetesGateway:
+            enabled: true 
+        # Ensure the GatewayClass is created
+        gatewayClass:
+          enabled: true
+          name: traefik-gateway-class
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: gateway-api-demo
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [CreateNamespace=true]
