@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/YOUR_USER/my-k8s-platform.git' # Change to your repo
+    repoURL: 'https://github.com/Viki2608/my-k8s-platform.git' # Change to your repo
     targetRevision: HEAD
     path: infrastructure/argocd-apps
   destination:
