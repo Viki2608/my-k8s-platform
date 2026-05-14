@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://traefik.github.io/charts'
     chart: traefik
-    targetRevision: 33.x.x
+    targetRevision: 33.* # Use a valid SemVer range like 33.* or a specific version like 33.0.0
     helm:
       values: |
         providers:
@@ -16,13 +16,32 @@ spec:
             enabled: false # Disable standard Ingress here
           kubernetesGateway:
             enabled: true 
+          kubernetesCRD:
+            enabled: true # CRITICAL: Required for Traefik to read Middleware and TLSOption CRDs
+            
         # Ensure the GatewayClass is created
         gatewayClass:
           enabled: true
           name: traefik-gateway-class
+          
+        # CRITICAL: Define entrypoints so Traefik matches the Gateway listener ports
+        ports:
+          web:
+            port: 8000
+            expose: true
+            exposedPort: 80
+            protocol: TCP
+          websecure:
+            port: 8443
+            expose: true
+            exposedPort: 443
+            protocol: TCP
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: gateway-api-demo
   syncPolicy:
-    automated: { prune: true, selfHeal: true }
-    syncOptions: [CreateNamespace=true]
+    automated: 
+      prune: true
+      selfHeal: true
+    syncOptions: 
+      - CreateNamespace=true
